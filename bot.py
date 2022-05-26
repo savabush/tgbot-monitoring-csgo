@@ -14,6 +14,8 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from handlers.base import register_handler_base
 from handlers.vps import register_handler_vps
 from handlers.balance import register_handler_balance
+from handlers.valve_page import register_handler_valve_page
+from handlers.server_valve import register_handler_valve
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,8 @@ async def main():
     register_handler_base(dp)
     register_handler_balance(dp)
     register_handler_vps(dp)
+    register_handler_valve_page(dp)
+    register_handler_valve(dp)
 
     await dp.start_polling()
 

@@ -6,7 +6,7 @@ import aiogram.utils.markdown as fmt
 async def cmd_start(msg: types.Message, state: FSMContext):
     await state.finish()
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    buttons = ['VPS', 'Баланс', 'О боте']
+    buttons = ['VPS', 'Valve', 'Баланс', 'О боте']
     keyboard.add(*buttons)
     await msg.answer('Меню:', reply_markup=keyboard)
     await msg.delete()
@@ -15,6 +15,8 @@ async def cmd_start(msg: types.Message, state: FSMContext):
 async def about(msg: types.Message):
     await msg.answer(f'{fmt.hide_link("github.com/savabush/")}'
                      f'Бот для получения статистики и управления VPS конфигурациями через API Fornex.'
+                     f'В этой версии бота также доступен мониторинг серверов Valve.'
+                     f'Другие версии этого бота можете посмотреть по ссылке снизу:'
                      f'\n\nMade by savabush', parse_mode=types.ParseMode.HTML)
 
 
