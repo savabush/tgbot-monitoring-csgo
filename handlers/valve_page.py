@@ -4,7 +4,7 @@ from aiogram import types, Dispatcher
 
 async def valve_page(msg: types.Message):
     keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    buttons = ['Информация и статус', 'Рестарт сервера', 'Включить сервер', 'Выключить сервер']
+    buttons = ['Информация и статус', 'Рестарт сервера', 'Включить сервер', 'Выключить сервер', 'RCON', 'Меню']
     keyboard.add(*buttons)
     await msg.answer('Выберите опцию:', reply_markup=keyboard)
 

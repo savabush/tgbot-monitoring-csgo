@@ -1,24 +1,16 @@
-import valve.source
-import valve.source.a2s
-import valve.source.master_server
+import valve.rcon
 
 
-def get_info_server_csgo(server_address):
+def get_info_server_csgo(server_address, rcon_password):
     """
-    Return string info about server with players/maxplayers and score
-    :param server_address:
+    Return string info about server with players/max_players and score
+    :param server_address: IP addr
+    :param rcon_password: RCON password
     :return:
     """
-    with valve.source.a2s.ServerQuerier(server_address) as server:
-        try:
-            info = server.info()
-            info_repr = '{player_count}/{max_players} {server_name}'.format(**info)
-            players = server.players()
-            if players['player_count'] > 0:
-                sort_players = sorted(players['players'], key=lambda p: p['score'], reverse=True)
-                players_repr = '\n'.join('{score} {name}'.format(**player) for player in sort_players)
-            else:
-                players_repr = 'На сервере пока пусто'
-            return info_repr + '\n\n\n' + players_repr
-        except valve.source.NoResponseError:
-            return 'Технические неполадки'
+    try:
+        with valve.rcon.RCON(server_address, rcon_password) as rcon_:
+            response = rcon_.execute('users')
+            return response.body.decode('utf-8')
+    except ConnectionRefusedError:
+        return 'Технические неполадки'
