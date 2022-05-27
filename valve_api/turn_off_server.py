@@ -4,7 +4,7 @@ from re import sub
 
 def turn_off_server_ssh():
     """
-    Turning ON server csgo
+    Turning OFF server csgo
     :return:
     """
     result = ssh_connect('cd csgo/ && ./csgoserver stop')
