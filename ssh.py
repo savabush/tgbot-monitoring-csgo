@@ -5,7 +5,7 @@ from paramiko import BadHostKeyException, SSHException
 
 def ssh_connect(command):
     try:
-        host = os.getenv('HOST_SSH')
+        host = os.getenv('SERVER_IP')
         user = os.getenv('USER_SSH')
         password = os.getenv('PASSWORD_SSH')
         port = int(os.getenv('PORT_SSH'))
