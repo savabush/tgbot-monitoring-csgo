@@ -1,5 +1,6 @@
 # Aiogram
 from aiogram import types, Dispatcher
+from aiogram.dispatcher import FSMContext
 
 # Api
 from valve_api.info_server import get_info_server_csgo
@@ -16,7 +17,8 @@ async def logs_menu(msg: types.Message):
     await msg.answer('Выберите опцию:', reply_markup=keyboard)
 
 
-async def rcon_menu(msg: types.Message):
+async def rcon_menu(msg: types.Message, state: FSMContext):
+    await state.finish()
     keyboard = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     buttons = ['Игроки', 'Кик', 'Бан', 'Убрать из бана', 'Добавить админа',
                'Удалить админа', 'Добавить VIP', 'Удалить VIP', 'Команда', 'Меню']
@@ -49,5 +51,5 @@ def register_handler_valve(dp: Dispatcher):
     dp.register_message_handler(restart_server, lambda msg: msg.text == 'Рестарт сервера')
     dp.register_message_handler(turn_on_server, lambda msg: msg.text == 'Включить сервер')
     dp.register_message_handler(turn_off_server, lambda msg: msg.text == 'Выключить сервер')
-    dp.register_message_handler(rcon_menu, lambda msg: msg.text == 'RCON')
+    dp.register_message_handler(rcon_menu, lambda msg: msg.text == 'RCON' or msg.text == 'Назад', state='*')
     dp.register_message_handler(logs_menu, lambda msg: msg.text == 'Логи')

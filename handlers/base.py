@@ -6,7 +6,7 @@ import aiogram.utils.markdown as fmt
 async def cmd_start(msg: types.Message, state: FSMContext):
     await state.finish()
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    buttons = ['VPS', 'Valve', 'Баланс', 'О боте']
+    buttons = ['Valve', 'О боте']
     keyboard.add(*buttons)
     await msg.answer('Меню:', reply_markup=keyboard)
     await msg.delete()

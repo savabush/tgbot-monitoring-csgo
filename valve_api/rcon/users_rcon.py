@@ -11,7 +11,7 @@ def get_users_rcon():
     server_address = (os.getenv('SERVER_IP'), int(os.getenv('SERVER_PORT')))
     try:
         with valve.rcon.RCON(server_address, rcon_password) as rcon:
-            response = rcon.execute('users')
+            response = rcon.execute('status')
             result = response.body.decode('utf-8')
             return result
     except ConnectionRefusedError:
