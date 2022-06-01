@@ -8,6 +8,9 @@ from valve_api.rcon.some_command import post_rcon
 from valve_api.rcon.users_rcon import get_users_rcon
 from valve_api.rcon.kickid_rcon import kick_id
 
+# Keyboards
+from keyboards import keyboard_back
+
 
 class RconState(StatesGroup):
     wait_for_comm = State()
@@ -15,9 +18,7 @@ class RconState(StatesGroup):
 
 
 async def some_command(msg: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    buttons = ['Назад']
-    keyboard.add(*buttons)
+    keyboard = keyboard_back()
     await msg.answer('Введите консольную команду:', reply_markup=keyboard)
     await RconState.wait_for_comm.set()
 
@@ -41,9 +42,7 @@ async def kickid(msg: types.Message):
         await msg.answer('На сервере нет игроков')
         return
     else:
-        keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-        buttons = ['Назад']
-        keyboard.add(*buttons)
+        keyboard = keyboard_back()
         await msg.answer(result)
         await msg.answer('Введите userid игрока и сообщение через пробел:', reply_markup=keyboard)
         await RconState.wait_for_kickid_and_comm.set()

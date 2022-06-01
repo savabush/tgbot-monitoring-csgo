@@ -8,21 +8,18 @@ from valve_api.restart_server import restart_server_ssh
 from valve_api.turn_on_server import turn_on_server_ssh
 from valve_api.turn_off_server import turn_off_server_ssh
 
+# Keyboards
+from keyboards import keyboard_logs_menu, keyboard_rcon_menu
+
 
 async def logs_menu(msg: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-    buttons = ['Логи сервера', 'Логи консоли', 'Логи скрипта',
-               'Логи SourceMod', 'Логи MetaMod', 'Меню']
-    keyboard.add(*buttons)
+    keyboard = keyboard_logs_menu()
     await msg.answer('Выберите опцию:', reply_markup=keyboard)
 
 
 async def rcon_menu(msg: types.Message, state: FSMContext):
     await state.finish()
-    keyboard = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-    buttons = ['Игроки', 'Кик', 'Бан', 'Убрать из бана', 'Добавить админа',
-               'Удалить админа', 'Добавить VIP', 'Удалить VIP', 'Команда', 'Меню']
-    keyboard.add(*buttons)
+    keyboard = keyboard_rcon_menu()
     await msg.answer('Выберите опцию:', reply_markup=keyboard)
 
 

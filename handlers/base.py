@@ -1,13 +1,12 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 import aiogram.utils.markdown as fmt
+from keyboards import keyboard_start
 
 
 async def cmd_start(msg: types.Message, state: FSMContext):
     await state.finish()
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    buttons = ['Valve', 'О боте']
-    keyboard.add(*buttons)
+    keyboard = keyboard_start()
     await msg.answer('Меню:', reply_markup=keyboard)
     await msg.delete()
 

@@ -1,6 +1,6 @@
 import os
 import valve.rcon
-from valve_api.rcon.users_rcon import get_users_rcon
+from valve_api.rcon.info_user import info_user
 
 
 def kick_id(number, msg):
@@ -11,12 +11,7 @@ def kick_id(number, msg):
     rcon_password = os.getenv('RCON_PASSWORD')
     server_address = (os.getenv('SERVER_IP'), int(os.getenv('SERVER_PORT')))
 
-    users_string = get_users_rcon()
-    users = users_string.split('\n')[9:-3]
-    curr_user = None
-    for user in users:
-        if user.split()[1:][1] == number:
-            curr_user = user.split()[1:]
+    curr_user = info_user(number)
     userid, slot, name, uniqueid, connected, ping, loss, state, rate, adr = curr_user
 
     try:
