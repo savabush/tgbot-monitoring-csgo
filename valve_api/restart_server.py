@@ -1,4 +1,4 @@
-from ssh import ssh_connect
+from ssh.ssh import ssh_connect
 from re import sub
 
 

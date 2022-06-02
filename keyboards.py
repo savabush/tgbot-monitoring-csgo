@@ -26,8 +26,7 @@ def keyboard_logs_menu():
 
 def keyboard_rcon_menu():
     keyboard = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-    buttons = ['Игроки', 'Кик', 'Бан', 'Убрать из бана', 'Добавить админа',
-               'Удалить админа', 'Добавить VIP', 'Удалить VIP', 'Команда', 'Меню']
+    buttons = ['Игроки', 'Кик', 'Бан', 'Убрать из бана', 'Добавить VIP', 'Удалить VIP', 'Команда', 'Меню']
     keyboard.add(*buttons)
     return keyboard
 

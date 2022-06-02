@@ -3,9 +3,9 @@ import valve.rcon
 from valve_api.rcon.info_user import info_user
 
 
-def kick_id(number, msg):
+def del_vip_rcon(number):
     """
-    Function to kick player using steamid, id or name
+    Function to delete VIP to player using steamid
     :return: response from server
     """
     rcon_password = os.getenv('RCON_PASSWORD')
@@ -13,11 +13,10 @@ def kick_id(number, msg):
 
     curr_user = info_user(number)
     userid, slot, name, uniqueid, connected, ping, loss, state, rate, adr = curr_user
-    user = f'#{userid}' if userid else name.replace("\"", '')
 
     try:
         with valve.rcon.RCON(server_address, rcon_password) as rcon:
-            response = rcon.execute(f'sm_kick {user} {msg if msg else "Deserved"}')
+            response = rcon.execute(f'sm_delvip {uniqueid}')
             result = response.body.decode('utf-8')
             return result
     except ConnectionRefusedError:
