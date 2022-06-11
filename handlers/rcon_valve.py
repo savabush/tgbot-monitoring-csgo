@@ -10,7 +10,6 @@ from valve_api.rcon.kickid_rcon import kick_id
 from valve_api.rcon.banid_rcon import ban_id
 from valve_api.rcon.unban_rcon import unban_rcon
 from valve_api.rcon.add_vip import add_vip_rcon
-from valve_api.rcon.del_vip import del_vip_rcon
 from ssh.groups_vip import groups_vip
 
 # Keyboards
@@ -23,7 +22,6 @@ class RconState(StatesGroup):
     wait_for_banid_and_comm = State()
     wait_for_unban = State()
     wait_for_addvip = State()
-    wait_for_delvip = State()
 
 
 async def some_command(msg: types.Message):
@@ -170,35 +168,6 @@ async def send_addvip(msg: types.Message, state: FSMContext):
         return
 
 
-async def delvip(msg: types.Message):
-    result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
-    if not users_list:
-        await msg.answer('На сервере нет игроков')
-        return
-    else:
-        keyboard = keyboard_back()
-        await msg.answer(result)
-        await msg.answer('Введите userid игрока:', reply_markup=keyboard)
-        await RconState.wait_for_delvip.set()
-
-
-async def send_delvip(msg: types.Message, state: FSMContext):
-    text = msg.text
-    result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
-    if text.isdigit() and 0 < int(text) <= len(users_list):
-        await state.update_data(id_player=text)
-        data = await state.get_data()
-        result = del_vip_rcon(data['id_player'])
-        await msg.answer(result)
-        await state.finish()
-    else:
-        await msg.answer(result)
-        await msg.answer('Введите правильный userid\n\nПример userid: # 2 --> 1 <-- "username"')
-        return
-
-
 def register_handler_rcon_valve(dp: Dispatcher):
     dp.register_message_handler(users, lambda msg: msg.text == 'Игроки')
     dp.register_message_handler(some_command, lambda msg: msg.text == 'Команда')
@@ -211,5 +180,3 @@ def register_handler_rcon_valve(dp: Dispatcher):
     dp.register_message_handler(send_unban, state=RconState.wait_for_unban)
     dp.register_message_handler(addvip, lambda msg: msg.text == 'Добавить VIP')
     dp.register_message_handler(send_addvip, state=RconState.wait_for_addvip)
-    dp.register_message_handler(delvip, lambda msg: msg.text == 'Удалить VIP')
-    dp.register_message_handler(send_delvip, state=RconState.wait_for_delvip)
