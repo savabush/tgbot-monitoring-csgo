@@ -11,6 +11,7 @@ from valve_api.rcon.banid_rcon import ban_id
 from valve_api.rcon.unban_rcon import unban_rcon
 from valve_api.rcon.add_vip import add_vip_rcon
 from ssh.groups_vip import groups_vip
+from ssh.banned_users import banned_users
 
 # Keyboards
 from keyboards import keyboard_back
@@ -44,7 +45,7 @@ async def users(msg: types.Message):
 
 async def kickid(msg: types.Message):
     result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
+    users_list = result.split('\n')[11:-3]
     if not users_list:
         await msg.answer('На сервере нет игроков')
         return
@@ -58,8 +59,9 @@ async def kickid(msg: types.Message):
 async def send_kickid(msg: types.Message, state: FSMContext):
     text = msg.text.split()
     result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
-    if 1 <= len(text) and text[0].isdigit() and 0 < int(text[0]) <= len(users_list):
+    users_list = result.split('\n')[11:-3]
+    users_ids = (user.split()[2] for user in users_list)
+    if 1 <= len(text) and text[0].isdigit() and text[0] in users_ids:
         id_player = text[0]
         message = ' '.join(text[1:]) if len(text) > 1 else None
         await state.update_data(id_player=id_player, message=message)
@@ -75,7 +77,7 @@ async def send_kickid(msg: types.Message, state: FSMContext):
 
 async def banid(msg: types.Message):
     result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
+    users_list = result.split('\n')[11:-3]
     if not users_list:
         await msg.answer('На сервере нет игроков')
         return
@@ -89,11 +91,13 @@ async def banid(msg: types.Message):
 async def send_banid(msg: types.Message, state: FSMContext):
     text = msg.text.split()
     result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
-    if 2 <= len(text) <= 3 and text[0].isdigit() and 0 < int(text[0]) <= len(users_list):
+    users_list = result.split('\n')[11:-3]
+    users_ids = (user.split()[2] for user in users_list)
+    if 2 <= len(text) and text[0].isdigit() \
+            and text[0] in users_ids and text[1].isdigit():
         id_player = text[0]
         time_ban = text[1]
-        message = text[2] if len(text) == 3 else None
+        message = " ".join(text[2:]) if len(text) >= 3 else None
         await state.update_data(id_player=id_player, time_ban=time_ban, message=message)
         data = await state.get_data()
         result = ban_id(data['id_player'], data['time_ban'], data['message'])
@@ -106,17 +110,19 @@ async def send_banid(msg: types.Message, state: FSMContext):
 
 
 async def unban(msg: types.Message):
-
-
-    keyboard = keyboard_back()
-    await msg.answer(banned_users)
-    await msg.answer('Введите порядковый номер пользователя:', reply_markup=keyboard)
-    await RconState.wait_for_unban.set()
+    banned_usr = banned_users()
+    if banned_usr:
+        keyboard = keyboard_back()
+        await msg.answer('\n'.join(banned_usr))
+        await msg.answer('Введите порядковый номер STEAMID:', reply_markup=keyboard)
+        await RconState.wait_for_unban.set()
+    else:
+        await msg.answer('Банлист пуст')
 
 
 async def send_unban(msg: types.Message, state: FSMContext):
-
-    if 2 <= len(text) <= 3 and text[0].isdigit() and 0 < int(text[0]) <= len(users_list):
+    banned_usr = banned_users()
+    if len(msg.text.split()) == 1 and msg.text.isdigit() and 0 < int(msg.text) <= len(banned_usr):
         number = msg.text
         await state.update_data(number=number)
         data = await state.get_data()
@@ -124,14 +130,14 @@ async def send_unban(msg: types.Message, state: FSMContext):
         await msg.answer(result)
         await state.finish()
     else:
-        await msg.answer(banned_users)
-        await msg.answer('Введите правильный номер пользователя')
+        await msg.answer('\n'.join(banned_usr))
+        await msg.answer('Введите правильный номер STEAMID')
         return
 
 
 async def addvip(msg: types.Message):
     result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
+    users_list = result.split('\n')[11:-3]
     groups = groups_vip()
     groups_list = '\n'.join(f'{i} - {group}' for i, group in enumerate(groups, 1))
     if not users_list:
@@ -148,11 +154,12 @@ async def addvip(msg: types.Message):
 async def send_addvip(msg: types.Message, state: FSMContext):
     text = msg.text.split()
     result = get_users_rcon()
-    users_list = result.split('\n')[9:-3]
+    users_list = result.split('\n')[11:-3]
+    users_ids = (user.split()[2] for user in users_list)
     groups = groups_vip()
     groups_list = '\n'.join(f'{i} - {group}' for i, group in enumerate(groups, 1))
     if len(text) == 3 and all(x.isdigit() for x in text) \
-            and 0 < int(text[1]) <= len(groups) and 0 < int(text[0]) <= len(users_list):
+            and 0 < int(text[1]) <= len(groups) and text[0] in users_ids:
         id_player = text[0]
         group_number = text[1]
         time_vip = text[2]
@@ -164,7 +171,7 @@ async def send_addvip(msg: types.Message, state: FSMContext):
     else:
         await msg.answer(result)
         await msg.answer(groups_list)
-        await msg.answer('Введите правильный userid и номер группы\n\nПример userid: # 2 --> 1 <-- "username"')
+        await msg.answer('Введите правильный userid, номер группы и время в секундах\n\nПример userid: # 2 --> 1 <-- "username"')
         return
 
 
