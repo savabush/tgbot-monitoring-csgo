@@ -1,4 +1,4 @@
-# Telegram Bot for Monitoring VPS Fornex
+# Telegram Bot for Monitoring CSGO Server
 
 <h4>Телеграмм бот для мониторинга сервера CSGO, созданного через LGSM.</h4>
 <hr>
